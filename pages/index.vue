@@ -57,7 +57,8 @@
 					/>
 					<button
 						@click="connect()"
-						class="bg-black rounded-lg py-3 px-10 w-full md:w-auto"
+						:class="{ 'bg-black': !friendId, 'bg-green-700': friendId }"
+						class="rounded-lg py-3 px-10 w-full md:w-auto"
 					>
 						<span class="text-white">Connect</span>
 					</button>
@@ -169,6 +170,10 @@
 	const friendId = ref(null);
 	//state for connection
 	const notConnected = ref(true);
+	// Check if an id is in the URL and add it to friend value
+	if (useRoute().query.id) {
+		friendId.value = useRoute().query.id;
+	}
 
 	// method used to share screen with friend
 	const shareScreen = async () => {
@@ -281,7 +286,7 @@
 			share({
 				title: "Join me for a video chat",
 				text: `Here is my ID: ${myId.value}`,
-				url: window.location.href,
+				url: window.location.href + `?id=${myId.value}`,
 			});
 		} else {
 			useSnack("Share is not suppoerted on this device", "red");
