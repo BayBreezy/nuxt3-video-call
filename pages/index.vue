@@ -74,9 +74,25 @@
 					class="absolute z-20 bottom-5 md:bottom-8 left-1/2 -translate-x-1/2 inline-block"
 				>
 					<button
+						title="Mute"
+						@click="toggleMute()"
+						:class="{
+							'bg-red-700 text-white': micMuted,
+							'bg-white text-gray-700': !micMuted,
+						}"
+						class="rounded-full p-3"
+					>
+						<Icon
+							v-if="micMuted"
+							icon="clarity:microphone-mute-line"
+							class="w-5 h-5"
+						/>
+						<Icon v-else icon="ph:microphone-light" class="w-5 h-5" />
+					</button>
+					<button
 						title="End Call"
 						@click="disconnect()"
-						class="bg-red-600 rounded-full p-3"
+						class="bg-red-600 rounded-full p-3 ml-5"
 					>
 						<Icon icon="material-symbols:call-end" class="w-5 h-5 text-white" />
 					</button>
@@ -169,10 +185,17 @@
 	const friendId = ref(null);
 	//state for connection
 	const notConnected = ref(true);
+	const micMuted = ref(false);
 	// Check if an id is in the URL and add it to friend value
 	if (useRoute().query.id) {
 		friendId.value = useRoute().query.id;
 	}
+
+	// Mute mic
+	const toggleMute = () => {
+		remotevideo.value.muted = !remotevideo.value.muted;
+		micMuted.value = remotevideo.value.muted;
+	};
 
 	// method used to share screen with friend
 	const shareScreen = async () => {
@@ -220,6 +243,10 @@
 		notConnected.value = false;
 		call.on("stream", (remoteStream) => {
 			remotevideo.value.srcObject = remoteStream;
+			if (!remotevideo.value.muted) {
+				remotevideo.value.muted = true;
+				micMuted.value = true;
+			}
 		});
 		call.on("close", () => {
 			disconnect();
@@ -234,7 +261,7 @@
 		$peer.disconnect();
 		notConnected.value = true;
 		friendId.value = null;
-		$peer.reconnect();
+		useRouter().go(0);
 	};
 
 	// Function used to connect to other peer
@@ -264,6 +291,10 @@
 			// Listen for stream from friend & add it to my video element
 			call.on("stream", (remoteStream) => {
 				remotevideo.value.srcObject = remoteStream;
+				if (!remotevideo.value.muted) {
+					remotevideo.value.muted = true;
+					micMuted.value = true;
+				}
 			});
 
 			// if the call ended, close the connection
