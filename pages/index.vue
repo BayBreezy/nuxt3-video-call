@@ -113,7 +113,6 @@
 					</button>
 				</div>
 				<video
-					muted
 					autoplay
 					ref="remotevideo"
 					class="w-full rounded-lg h-full"
