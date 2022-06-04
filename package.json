@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "devDependencies": {
+    "@iconify/vue": "^3.2.1",
+    "@nuxtjs/tailwindcss": "^5.1.2",
+    "@vueuse/core": "^8.6.0",
+    "@vueuse/nuxt": "^8.6.0",
+    "nuxt": "3.0.0-rc.3"
+  },
+  "dependencies": {
+    "peerjs": "^1.4.6"
+  }
+}
