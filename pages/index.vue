@@ -71,7 +71,7 @@
 		<main v-else class="min-h-screen bg-black">
 			<div class="rounded-lg h-screen relative w-full">
 				<div
-					class="absolute z-20 bottom-5 md:bottom-8 left-1/2 -translate-x-1/2 inline-block"
+					class="absolute z-20 bottom-5 md:bottom-8 left-1/2 -translate-x-1/2 w-full text-center"
 				>
 					<button
 						title="Mute"
@@ -97,7 +97,7 @@
 						<Icon icon="material-symbols:call-end" class="w-5 h-5 text-white" />
 					</button>
 					<button
-						v-if="enableShareScreen"
+						v-if="enableShareScreen && displayMediaSuppoerted"
 						title="Stop Share Screen"
 						@click="stopSharing()"
 						class="bg-amber-600 rounded-full p-3 ml-5"
@@ -106,7 +106,7 @@
 					</button>
 					<button
 						title="Share Screen"
-						v-else
+						v-else-if="!enableShareScreen && displayMediaSuppoerted"
 						@click="shareScreen()"
 						class="bg-green-600 rounded-full p-3 ml-5"
 					>
@@ -177,6 +177,7 @@
 		start,
 		stop,
 		enabled: enableShareScreen,
+		isSupported: displayMediaSuppoerted,
 	} = useDisplayMedia({});
 
 	// variables that will be used
@@ -243,10 +244,6 @@
 		notConnected.value = false;
 		call.on("stream", (remoteStream) => {
 			remotevideo.value.srcObject = remoteStream;
-			if (!remotevideo.value.muted) {
-				remotevideo.value.muted = true;
-				micMuted.value = true;
-			}
 		});
 		call.on("close", () => {
 			disconnect();
@@ -291,10 +288,6 @@
 			// Listen for stream from friend & add it to my video element
 			call.on("stream", (remoteStream) => {
 				remotevideo.value.srcObject = remoteStream;
-				if (!remotevideo.value.muted) {
-					remotevideo.value.muted = true;
-					micMuted.value = true;
-				}
 			});
 
 			// if the call ended, close the connection
